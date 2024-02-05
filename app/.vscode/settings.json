@@ -1,0 +1,10 @@
+{
+    "files.autoSave": "afterDelay",
+    "breadcrumbs.showNamespaces": true,
+    "editor.trimAutoWhitespace": true,
+    "editor.minimap.autohide": true,
+    "editor.minimap.renderCharacters": false,
+    "javascript.preferences.importModuleSpecifierEnding": "auto",
+    "editor.formatOnSave": true,
+    "prettier.singleQuote": true
+}
