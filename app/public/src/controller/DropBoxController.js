@@ -6,9 +6,11 @@ class DropBoxController {
     this.progressBarEl = this.snackModalEl.querySelector('.mc-progress-bar-fg');
     this.nameFileEl = this.snackModalEl.querySelector('.filename');
     this.timeFileEl = this.snackModalEl.querySelector('.timeleft');
+    this.listFilesEl = document.querySelector('#list-of-files-and-directories');
 
     this.connectFirebase();
     this.initEvents();
+    this.readFiles();
   }
 
   connectFirebase() {
@@ -134,7 +136,7 @@ class DropBoxController {
 
   getFileIconView(file) {
     console.log(file);
-    switch (file.mimetype) {
+    switch (file.type) {
       case 'folder':
         return `<svg width="160" height="160" viewBox="0 0 160 160" class="mc-icon-template-content tile__preview tile__preview--icon"><title>content-folder-large</title><g fill="none" fill-rule="evenodd"><path d="M77.955 53h50.04A3.002 3.002 0 0 1 131 56.007v58.988a4.008 4.008 0 0 1-4.003 4.005H39.003A4.002 4.002 0 0 1 35 114.995V45.99c0-2.206 1.79-3.99 3.997-3.99h26.002c1.666 0 3.667 1.166 4.49 2.605l3.341 5.848s1.281 2.544 5.12 2.544l.005.003z" fill="#71B9F4"></path><path d="M77.955 52h50.04A3.002 3.002 0 0 1 131 55.007v58.988a4.008 4.008 0 0 1-4.003 4.005H39.003A4.002 4.002 0 0 1 35 113.995V44.99c0-2.206 1.79-3.99 3.997-3.99h26.002c1.666 0 3.667 1.166 4.49 2.605l3.341 5.848s1.281 2.544 5.12 2.544l.005.003z" fill="#92CEFF"></path></g></svg>`;
 
@@ -160,10 +162,28 @@ class DropBoxController {
     }
   }
 
-  getFileView(file) {
-    return `<li>
-      ${this.getFileIconView(file)}
-      <div class="name text-center">${file.name}</div>
-    </li>`;
+  readFiles() {
+    this.getFirebaseRef().on('value', (snapshot) => {
+      this.listFilesEl.innerHTML = '';
+
+      snapshot.forEach((snapshotItem) => {
+        const key = snapshotItem.key;
+        const data = snapshotItem.val();
+
+        console.log({ key, data });
+
+        this.listFilesEl.appendChild(this.getFileView(data, key));
+      });
+    });
+  }
+
+  getFileView(file, key) {
+    const li = document.createElement('li');
+    li.dataset.key = key;
+
+    li.innerHTML = `${this.getFileIconView(file)}
+      <div class="name text-center">${file.name}</div>`;
+
+    return li;
   }
 }
